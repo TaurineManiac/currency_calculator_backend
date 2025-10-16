@@ -1,10 +1,27 @@
 import httpx
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, List
 from datetime import datetime
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,#КАКОЙ тип middleware добавляем   Middleware = "Промежуточное ПО"
+# 1. Браузер → Запрос к API
+# 2. FastAPI → "Эй, CORS Middleware, проверь этот запрос!"
+# 3. CORS Middleware → Смотрит настройки allow_origins
+# 4. CORS Middleware → "Окей, этот origin разрешен → пропускаем"
+# 5. Запрос попадает в твой эндпоинт (/convert, /rates)
+# 6. Твой код обрабатывает и возвращает ответ
+# 7. CORS Middleware → Добавляет специальные заголовки в ответ
+# 8. Браузер → Видит заголовки → "Окей, показываю ответ!"
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
 
 class Rate(BaseModel):
     Cur_ID: int
